@@ -2,7 +2,6 @@
 
 AUTO CLAIM FOR BLUM / @blum
 
-[Click to read the readme in Indonesian](README_ID.md)
 
 # Table of Contents
 - [Blumtod](#blumtod)
@@ -41,7 +40,7 @@ All risks are borne by the user
 
 # Register ?
 
-Click the following url to register : [https://t.me/BlumCryptoBot/app?startapp=ref_aPYIYj1oKc](https://t.me/BlumCryptoBot/app?startapp=ref_aPYIYj1oKc)
+Click the following url to register : [https://t.me/BlumCryptoBot/app?startapp](https://t.me/BlumCryptoBot/app)
 
 # How to Use
 
@@ -193,11 +192,6 @@ socks5://user:pass@127.0.0.1:6969
    python bot.py
    ```
 
-# Video Guide to Get Data
-
-The require data is same like [pixelversebot](https://github.com/akasakaid/pixelversebot) so you can watch same tutorial / video guide to get data !
-
-Here : [https://youtu.be/KTZW9A75guI](https://youtu.be/KTZW9A75guI)
 
 # Javascript Command to Get Telegram Data for Desktop
 
@@ -208,28 +202,3 @@ copy(Telegram.WebApp.initData)
 # Run for 24/7 
 
 You can run the script bot for 24/7 using vps / rdp. You can use `screen` application in vps linux to running the script bot in background process
-
-# Discussion
-
-If you have an question or something you can ask in here : [@sdsproject_chat](https://t.me/sdsproject_chat)
-
-# Support My Work
-
-To support me you can buy me a coffee via website in below
-
-- [Indonesian] https://s.id/nusanqr (QRIS)
-- [Indonesian] https://trakteer.id/fawwazthoerif/tip
-- [Global] https://sociabuzz.com/fawwazthoerif/tribe
-
-# QnA
-
-Q : Is this bot/program script required to use a proxy?
-
-A : No, this bot/program script is not required to use a proxy.
-
-Q : How can I use a proxy?
-
-A : Simply fill in the proxies.txt file according to the format I have explained.
-
-
-# Thank you < 3

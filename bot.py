@@ -60,57 +60,146 @@ class BlumTod:
         return access_token
 
     def solve_task(self, access_token):
-        url_task = "https://game-domain.blum.codes/api/v1/tasks"
+        url_task = "https://earn-domain.blum.codes/api/v1/tasks"
         ignore_tasks = [
             "39391eb2-f031-4954-bd8a-e7aecbb1f192",  # wallet connect
             "d3716390-ce5b-4c26-b82e-e45ea7eba258",  # invite task
-            "f382ec3f-089d-46de-b921-b92adfd3327a", # invite task
-            "220ee7b1-cca4-4af8-838a-2001cb42b813", # invite task
-            "5ecf9c15-d477-420b-badf-058537489524", # invite task
-            "c4e04f2e-bbf5-4e31-917b-8bfa7c4aa3aa" # invite task
+            "f382ec3f-089d-46de-b921-b92adfd3327a",  # invite task
+            "220ee7b1-cca4-4af8-838a-2001cb42b813",  # invite task
+            "5ecf9c15-d477-420b-badf-058537489524",  # invite task
+            "c4e04f2e-bbf5-4e31-917b-8bfa7c4aa3aa"  # invite task
         ]
         headers = self.base_headers.copy()
         headers["Authorization"] = f"Bearer {access_token}"
-        res = self.http(url_task, headers)
+        res = self.http(url_task, headers, None)
         for tasks in res.json():
             if isinstance(tasks, str):
                 self.log(f"{kuning}failed get task list !")
                 return
-            for k in list(tasks.keys()):
-                for t in tasks.get(k):
-                    for task in t.get("tasks"):
-                        task_id = task.get("id")
-                        task_title = task.get("title")
-                        task_status = task.get("status")
-                        start_task_url = f"https://game-domain.blum.codes/api/v1/tasks/{task_id}/start"
-                        claim_task_url = f"https://game-domain.blum.codes/api/v1/tasks/{task_id}/claim"
-                        if task_id in ignore_tasks:
-                            continue
-                        if task_status == "FINISHED":
-                            self.log(
-                                f"{kuning}already complete task id {putih}{task_id} !"
-                            )
-                            continue
-                        if task_status == "READY_FOR_CLAIM":
-                            _res = self.http(claim_task_url, headers, "")
-                            _status = _res.json().get("status")
-                            if _status == "FINISHED":
-                                self.log(
-                                    f"{hijau}success complete task id {putih}{task_id} !"
-                                )
+            if tasks.get("tasks"):
+                # print("get tasks", tasks)
+                for task in tasks.get("tasks"):
+                    if task.get('subTasks'):
+                        print("get sub tasks")
+                        for subTask in task.get('subTasks'):
+                            try:
+                                check = self.do_task(subTask, ignore_tasks, headers)
+                                if not check:
+                                   continue
+                            except:
                                 continue
+            if tasks.get('subSections'):
+                print("get sub sections")
+                for subSection in tasks.get('subSections'):
+                    try:
+                        if subSection.get('tasks'):
+                            print("get sub section tasks")
+                            for subTask in subSection.get('tasks'):
+                                check = self.do_task(subTask, ignore_tasks, headers)
+                                if not check:
+                                    continue
+                    except Exception as e:
+                        print(e)
+                        continue
+            # for k in list(tasks.keys()):
+            #     print(k)
+            #     if k == 'tasks':
+            #         for t in tasks.get(k):
+            #
+            #             print(t)
+            #             for task in t.get("tasks"):
+            #                 task_id = task.get("id")
+            #                 task_title = task.get("title")
+            #                 print(task_title)
+            #                 task_status = task.get("status")
+            #                 start_task_url = f"https://game-domain.blum.codes/api/v1/tasks/{task_id}/start"
+            #                 claim_task_url = f"https://game-domain.blum.codes/api/v1/tasks/{task_id}/claim"
+            #                 if task_id in ignore_tasks:
+            #                     continue
+            #                 if task_status == "FINISHED":
+            #                     self.log(
+            #                         f"{kuning}already complete task id {putih}{task_id} !"
+            #                     )
+            #                     continue
+            #                 if task_status == "READY_FOR_CLAIM":
+            #                     _res = self.http(claim_task_url, headers, "")
+            #                     _status = _res.json().get("status")
+            #                     if _status == "FINISHED":
+            #                         self.log(
+            #                             f"{hijau}success complete task id {putih}{task_id} !"
+            #                         )
+            #                         continue
+            #
+            #                 _res = self.http(start_task_url, headers, "")
+            #                 self.countdown(5)
+            #                 _status = _res.json().get("status")
+            #                 if _status == "STARTED":
+            #                     _res = self.http(claim_task_url, headers, "")
+            #                     _status = _res.json().get("status")
+            #                     if _status == "FINISHED":
+            #                         self.log(
+            #                             f"{hijau}success complete task id {putih}{task_id} !"
+            #                         )
+            #                         continue
+    def do_task(self, task, ignore_tasks, headers):
+        list_task_verify = [
+            {"id":"350501e9-4fe4-4612-b899-b2daa11071fb", "keyword":"CRYPTOSMART"},
+            {"id": "d95d3299-e035-4bf6-a7ca-0f71578e9197", "keyword": "EVER"},
+            {"id": "6af85c01-f68d-4311-b78a-9cf33ba5b151", "keyword": "GET"},
+        ]
+        task_id = task.get("id")
+        task_title = task.get("title")
+        print(task_title)
+        task_status = task.get("status")
+        start_task_url = f"https://earn-domain.blum.codes/api/v1/tasks/{task_id}/start"
+        validate_task_url = f"https://earn-domain.blum.codes/api/v1/tasks/{task_id}/validate"
+        claim_task_url = f"https://earn-domain.blum.codes/api/v1/tasks/{task_id}/claim"
+        if task_id in ignore_tasks:
+            return False
+        if task_status == "FINISHED":
+            self.log(
+                f"{kuning}already complete task id {putih}{task_id} !"
+            )
+            return False
+        if task_status == "READY_FOR_VERIFY":
+            for task_verify in list_task_verify:
+                key = ""
+                if task_verify.get("id") == task_id:
+                    key = task_verify.get("keyword")
+                print(key)
+            _res = self.http(validate_task_url, headers, {"keyword": key })
+            _status = _res.status_code
+            if _status == 200:
+                self.log(
+                    f"{hijau}success validate task id {putih}{task_id} !"
+                )
+                return False
+            else:
+                self.log(
+                    f"{merah}failed validate task id {putih}{task_id} !"
+                )
+        if task_status == "READY_FOR_CLAIM":
 
-                        _res = self.http(start_task_url, headers, "")
-                        self.countdown(5)
-                        _status = _res.json().get("status")
-                        if _status == "STARTED":
-                            _res = self.http(claim_task_url, headers, "")
-                            _status = _res.json().get("status")
-                            if _status == "FINISHED":
-                                self.log(
-                                    f"{hijau}success complete task id {putih}{task_id} !"
-                                )
-                                continue
+            _res = self.http(claim_task_url, headers, "")
+            _status = _res.json().get("status")
+            if _status == "FINISHED":
+                self.log(
+                    f"{hijau}success complete task id {putih}{task_id} !"
+                )
+                return False
+        self.countdown(3)
+        print(start_task_url)
+        _res = self.http(start_task_url, headers, "")
+        self.countdown(1)
+        _status = _res.json().get("status")
+        if _status == "STARTED":
+            _res = self.http(claim_task_url, headers, "")
+            _status = _res.json().get("status")
+            if _status == "FINISHED":
+                self.log(
+                    f"{hijau}success complete task id {putih}{task_id} !"
+                )
+                return True
 
     def set_proxy(self, proxy=None):
         self.ses = requests.Session()
@@ -380,8 +469,7 @@ class BlumTod:
     def main(self):
         banner = f"""
 {magenta}┏┓┳┓┏┓  ┏┓    •      {putih}BlumTod Auto Claim for {hijau}blum
-{magenta}┗┓┃┃┗┓  ┃┃┏┓┏┓┓┏┓┏╋  {hijau}Author : {putih}AkasakaID
-{magenta}┗┛┻┛┗┛  ┣┛┛ ┗┛┃┗ ┗┗  {putih}Github : {hijau}https://github.com/AkasakaID
+{magenta}┗┓┃┃┗┓  ┃┃┏┓┏┓┓┏┓┏╋ 
 {magenta}              ┛      {hijau}Note : {putih}Every Action Has a Consequence
         """
         arg = argparse.ArgumentParser()
@@ -438,7 +526,8 @@ class BlumTod:
                         self.save_local_token(userid, access_token)
                     expired = self.is_expired(access_token)
                     if expired:
-                        access_token = False
+                        # access_token = False
+                        access_token = self.renew_access_token(data)
                         continue
                     break
                 if failed_fetch_token:
