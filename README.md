@@ -96,7 +96,7 @@ socks5://user:pass@127.0.0.1:6969
 
 2. Clone this repository
    ```shell
-   git clone https://github.com/akasakaid/blumtod.git
+   git clone git@github.com:huy2k/blumTod.git
    ```
 
 3. goto blumtod directory
